@@ -1,18 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Thuong-dev</title>
-    <meta charset="UTF-8" />
-    <meta name="Generator" content="EditPlus" />
-    <meta name="Author" content="" />
-    <meta name="Keywords" content="" />
-    <meta name="Description" content="" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-  </head>
-  <body>
-    <div class="box">
-      <canvas id="pinkboard"></canvas>
-    </div>
-    <script src="main.js"></script>
-  </body>
+
+<head>
+  <title>Thuong-dev</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="Generator" content="EditPlus" />
+  <meta name="Author" content="" />
+  <meta name="Keywords" content="" />
+  <meta name="Description" content="" />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+  <div id="introText">Nhấn vào màn hình để xem điều kỳ diệu</div>
+  <canvas id="pinkboard" style="display: none;"></canvas>
+
+
+  <audio id="bgm"
+    src="[Vietsub] Falling You - Tăng Khả Ni & Đô Trí Văn 曾可妮 & 都智文 - OST Chiếc Bật Lửa Và Váy Công Chúa - YouTube.mp3"
+    loop></audio>
+
+  <script src="main.js"></script>
+  <script>
+
+    var introText = document.getElementById('introText');
+    var canvas = document.getElementById('pinkboard');
+    var audio = document.getElementById('bgm');
+    var started = false;
+
+    document.body.addEventListener('click', function () {
+      if (!started) {
+        started = true;
+
+        introText.style.display = 'none';
+
+        canvas.style.display = 'block';
+
+        if (audio.paused) {
+          audio.play();
+        }
+
+        if (window.startHeartAnimation) {
+          window.startHeartAnimation();
+        }
+      }
+    });
+  </script>
+</body>
+
 </html>

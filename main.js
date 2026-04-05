@@ -176,17 +176,18 @@ var ParticlePool = (function () {
   var context = canvas.getContext("2d"),
     particles = new ParticlePool(settings.particles.length),
     particleRate = settings.particles.length / settings.particles.duration, // particles/sec
-    time;
+    time,
+    timeRunning = 0;
 
   // get point on heart with -PI <= t <= PI
   function pointOnHeart(t) {
     return new Point(
       160 * Math.pow(Math.sin(t), 3),
       130 * Math.cos(t) -
-        50 * Math.cos(2 * t) -
-        20 * Math.cos(3 * t) -
-        10 * Math.cos(4 * t) +
-        25
+      50 * Math.cos(2 * t) -
+      20 * Math.cos(3 * t) -
+      10 * Math.cos(4 * t) +
+      25
     );
   }
 
@@ -234,18 +235,21 @@ var ParticlePool = (function () {
     var newTime = new Date().getTime() / 1000,
       deltaTime = newTime - (time || newTime);
     time = newTime;
+    timeRunning += deltaTime;
 
-    // clear canvas
+    var zoom = Math.min(canvas.width / 700, 1);
+
+
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     function pointOnHeartx(t) {
       return new Point(
         160 * Math.pow(Math.sin(t), 3),
         130 * Math.cos(t) -
-          20 * Math.cos(2 * t) -
-          8 * Math.cos(3 * t) -
-          4 * Math.cos(4 * t) +
-          5
+        20 * Math.cos(2 * t) -
+        8 * Math.cos(3 * t) -
+        4 * Math.cos(4 * t) +
+        5
       );
     }
 
@@ -253,66 +257,73 @@ var ParticlePool = (function () {
       return new Point(
         320 * Math.pow(Math.sin(t), 3),
         260 * Math.cos(t) -
-          100 * Math.cos(2 * t) -
-          40 * Math.cos(3 * t) -
-          4 * Math.cos(4 * t) +
-          30
+        100 * Math.cos(2 * t) -
+        40 * Math.cos(3 * t) -
+        4 * Math.cos(4 * t) +
+        30
       );
     }
 
-    // create new particles
+
+    function spawnParticle(p, dir) {
+      var isGathering = (timeRunning < 2.5);
+      var px = p.x * zoom;
+      var py = p.y * zoom;
+      if (isGathering) {
+        var vx = -dir.x;
+        var vy = dir.y;
+        var D = 200 * zoom;
+        var spawnX = (canvas.width / 2 + px) - (vx / settings.particles.velocity) * D;
+        var spawnY = (canvas.height / 2 - py) - (vy / settings.particles.velocity) * D;
+        particles.add(spawnX, spawnY, vx, vy);
+      } else {
+        particles.add(
+          canvas.width / 2 + px,
+          canvas.height / 2 - py,
+          dir.x,
+          -dir.y
+        );
+      }
+    }
+
+
     var amount = particleRate * deltaTime;
     for (var i = 0; i < amount; i++) {
       var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
       var dir = pos.clone().length(settings.particles.velocity);
-      particles.add(
-        canvas.width / 2 + pos.x,
-        canvas.height / 2 - pos.y,
-        dir.x,
-        -dir.y
-      );
+      spawnParticle(pos, dir);
     }
 
     var amountx = (particleRate * deltaTime) / 5;
     for (var i = 0; i < amountx; i++) {
       var posx = pointOnHeartx(Math.PI - 2 * Math.PI * Math.random());
-      var dirx = pos.clone().length(100);
-      particles.add(
-        canvas.width / 2 + posx.x,
-        canvas.height / 2 - posx.y,
-        dirx.x,
-        -dirx.y
-      );
+      var dirx = posx.clone().length(100);
+      spawnParticle(posx, dirx);
     }
 
-    var amountx = (particleRate * deltaTime) / 2;
-    for (var i = 0; i < amountx; i++) {
-      var posx = pointOnHearty(Math.PI - 2 * Math.PI * Math.random());
-      var dirx = pos.clone().length(100);
-      particles.add(
-        canvas.width / 2 + posx.x,
-        canvas.height / 2 - posx.y,
-        dirx.x,
-        -dirx.y
-      );
+    var amountx2 = (particleRate * deltaTime) / 2;
+    for (var i = 0; i < amountx2; i++) {
+      var posy = pointOnHearty(Math.PI - 2 * Math.PI * Math.random());
+      var diry = posy.clone().length(100);
+      spawnParticle(posy, diry);
     }
 
-    // update and draw particles
+    s
     particles.update(deltaTime);
     particles.draw(context, image);
   }
 
-  // handle (re-)sizing of the canvas
+
   function onResize() {
-    var heightRatio = 1.5;
-    canvas.width = canvas.clientWidth * heightRatio;
-    canvas.height = canvas.clientHeight * heightRatio;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
   window.onresize = onResize;
 
-  // delay rendering bootstrap
-  setTimeout(function () {
+
+  window.startHeartAnimation = function () {
+    timeRunning = 0;
     onResize();
     render();
-  }, 10);
+  };
 })(document.getElementById("pinkboard"));
