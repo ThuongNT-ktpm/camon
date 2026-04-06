@@ -99,7 +99,9 @@ var Particle = (function () {
     function ease(t) {
       return --t * t * t + 1;
     }
-    var size = image.width * ease(this.age / settings.particles.duration);
+    var currentZoom = Math.min(window.innerWidth / 700, 1);
+    if (window.innerWidth <= 768) currentZoom *= 0.6;
+    var size = image.width * ease(this.age / settings.particles.duration) * currentZoom;
     context.globalAlpha = 1 - this.age / settings.particles.duration;
     context.drawImage(
       image,
@@ -238,6 +240,11 @@ var ParticlePool = (function () {
     timeRunning += deltaTime;
 
     var zoom = Math.min(canvas.width / 700, 1);
+    // Giảm kích thước trái tim trên màn hình mobile
+    if (canvas.width <= 768) {
+      zoom = zoom * 0.6;
+    }
+
 
 
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -273,8 +280,8 @@ var ParticlePool = (function () {
         var vx = -dir.x;
         var vy = dir.y;
         var D = 200 * zoom;
-        var spawnX = (canvas.width / 2 + px) - (vx / settings.particles.velocity) * D;
-        var spawnY = (canvas.height / 2 - py) - (vy / settings.particles.velocity) * D;
+        var spawnX = (canvas.width / 2 + px) - (vx / (settings.particles.velocity * zoom)) * D;
+        var spawnY = (canvas.height / 2 - py) - (vy / (settings.particles.velocity * zoom)) * D;
         particles.add(spawnX, spawnY, vx, vy);
       } else {
         particles.add(
@@ -290,21 +297,21 @@ var ParticlePool = (function () {
     var amount = particleRate * deltaTime;
     for (var i = 0; i < amount; i++) {
       var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-      var dir = pos.clone().length(settings.particles.velocity);
+      var dir = pos.clone().length(settings.particles.velocity * zoom);
       spawnParticle(pos, dir);
     }
 
     var amountx = (particleRate * deltaTime) / 5;
     for (var i = 0; i < amountx; i++) {
       var posx = pointOnHeartx(Math.PI - 2 * Math.PI * Math.random());
-      var dirx = posx.clone().length(100);
+      var dirx = posx.clone().length(100 * zoom);
       spawnParticle(posx, dirx);
     }
 
     var amountx2 = (particleRate * deltaTime) / 2;
     for (var i = 0; i < amountx2; i++) {
       var posy = pointOnHearty(Math.PI - 2 * Math.PI * Math.random());
-      var diry = posy.clone().length(100);
+      var diry = posy.clone().length(100 * zoom);
       spawnParticle(posy, diry);
     }
 

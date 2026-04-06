@@ -17,10 +17,31 @@
   <div id="introText">Nhấn vào màn hình để xem điều kỳ diệu</div>
   <canvas id="pinkboard" style="display: none;"></canvas>
 
+  <!-- Biểu tượng lá thư nhỏ góc màn hình -->
+  <div id="envelope-icon" style="display: none;">💌</div>
 
-  <audio id="bgm"
-    src="[Vietsub] Falling You - Tăng Khả Ni & Đô Trí Văn 曾可妮 & 都智文 - OST Chiếc Bật Lửa Và Váy Công Chúa - YouTube.mp3"
-    loop></audio>
+  <!-- Nội dung bức thư -->
+  <div id="letter-modal" style="display: none;">
+    <div class="letter-content">
+      <span id="close-letter">&times;</span>
+      <h2>Gửi Kim Vàng 🐻❤️</h2>
+      <div class="letter-image">
+        <img src="unnamed.webp" alt="Cute Bears" />
+      </div>
+      <p>Có những lời tớ chưa từng nói ra, nhưng hôm nay tớ muốn mượn code web này để gửi đến cậu.</p>
+      <p>Từ lúc anh được gặp em, anh nghĩ là chắc mình mất cơ hội rồi anh rất tự ti bản thân sợ em không thích anh.
+        Đêm hôm đó anh không ngủ được luôn vì nghĩ chắc anh không hợp với em rồi tại ở ngoài em rất dễ thương và rất vui
+        hoạt bát cụ thể hơn là rất xinh ấy nên anh sợ là em sẽ chê không thích ngoại hình anh. Anh cũng không biết sao
+        nữa nhưng
+        anh dám đảm bảo với em là một người tử tế, không tệ nạn lăng nhăng, không bao giờ làm em buồn.
+      </p>
+      <p>Em có thể cho anh một cơ hội và đồng ý cho anh tìm hiểu em được không?</p>
+      <div class="signature">Cảm ơn em vì đã cho anh cơ hội làm quen với em ❤️</div>
+    </div>
+  </div>
+
+
+  <audio id="bgm" src="hihi.mp3" loop></audio>
 
   <script src="main.js"></script>
   <script>
@@ -30,7 +51,12 @@
     var audio = document.getElementById('bgm');
     var started = false;
 
-    document.body.addEventListener('click', function () {
+    document.body.addEventListener('click', function (e) {
+      // Đảm bảo nhạc luôn bật nếu đang tắt (phòng trường hợp trình duyệt chặn auto-play lúc đầu)
+      if (audio.paused) {
+        audio.play().catch(function (err) { console.log("Audio play error: ", err); });
+      }
+
       if (!started) {
         started = true;
 
@@ -38,14 +64,67 @@
 
         canvas.style.display = 'block';
 
-        if (audio.paused) {
-          audio.play();
-        }
+        // Hiển thị lá thư
+        document.getElementById('envelope-icon').style.display = 'block';
 
         if (window.startHeartAnimation) {
           window.startHeartAnimation();
         }
+      } else {
+        // Sau khi đã bắt đầu, các lần click sau sẽ tạo hiệu ứng icon bay lên
+        createCuteExplosion(e.clientX, e.clientY);
       }
+    });
+
+    function createCuteExplosion(x, y) {
+      // Kết hợp cả icon và các từ ngữ dễ thương
+      var items = ['🐰', 'Love you'];
+      var amount = 4 + Math.floor(Math.random() * 5); // 4 đến 8 item một lần
+
+      for (var i = 0; i < amount; i++) {
+        var el = document.createElement('div');
+        var randomItem = items[Math.floor(Math.random() * items.length)];
+
+        // Nếu độ dài item > 2 (nghĩa là một cụm từ), gắn thêm class cho chữ
+        if (randomItem.length > 2) {
+          el.className = 'floating-icon floating-text';
+        } else {
+          el.className = 'floating-icon';
+        }
+
+        el.innerText = randomItem;
+
+        // Tạo hướng bay ngẫu nhiên cho từng icon
+        var tx = (Math.random() - 0.5) * 200; // Bay ngang qua lại (-100px đến 100px)
+        var ty = -Math.random() * 200 - 50; // Bay lên trên (-50px đến -250px)
+
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        el.style.setProperty('--tx', tx + 'px');
+        el.style.setProperty('--ty', ty + 'px');
+
+        document.body.appendChild(el);
+
+        // Tự động xóa element sau khi bay xong dể giải phóng bộ nhớ
+        setTimeout(function (element) {
+          return function () { element.remove(); };
+        }(el), 1500);
+      }
+    }
+
+    // Lắng nghe sự kiện click mở và đóng thư
+    var envelope = document.getElementById('envelope-icon');
+    var letterModal = document.getElementById('letter-modal');
+    var closeLetter = document.getElementById('close-letter');
+
+    envelope.addEventListener('click', function (e) {
+      e.stopPropagation();
+      letterModal.style.display = 'flex';
+    });
+
+    closeLetter.addEventListener('click', function (e) {
+      e.stopPropagation();
+      letterModal.style.display = 'none';
     });
   </script>
 </body>
