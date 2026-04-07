@@ -17,21 +17,24 @@
   <div id="introText">Bấm vào màn hình giúp anh nha</div>
   <canvas id="pinkboard" style="display: none;"></canvas>
 
-  <!-- Biểu tượng lá thư nhỏ góc màn hình -->
+
   <div id="envelope-icon" style="display: none;">💌</div>
 
-  <!-- Nội dung bức thư -->
+
   <div id="letter-modal" style="display: none;">
     <div class="letter-content">
       <span id="close-letter">&times;</span>
       <h2>Gửi Kim Vàng 🐻❤️</h2>
       <div class="letter-image">
-        <img src="unnamed.webp" alt="Cute Bears" />
+        <img src="image copy.png" alt="Cute Bears" />
       </div>
       <p>Có những lời anh chưa từng nói ra, nhưng hôm nay anh muốn mượn code web này để gửi đến em.</p>
-      <p>Từ lúc anh được gặp em, anh nghĩ là chắc mình mất cơ hội rồi anh rất tự ti bản thân sợ em không thích anh.
+      <p>Từ lúc anh được gặp em, anh nghĩ là chắc mình mất cơ hội rồi, anh rất tự ti bản thân sợ em không thích anh.
         Đêm hôm đó anh không ngủ được luôn vì nghĩ chắc anh không hợp với em rồi tại ở ngoài em rất dễ thương và rất vui
-        hoạt bát cụ thể hơn là rất xinh ấy nên anh sợ là em sẽ chê không thích ngoại hình anh. Anh cũng không biết sao
+        hoạt bát cụ thể hơn là rất xinh ấy nên anh sợ là em sẽ chê không thích ngoại hình anh. Anh thấy em rất khác trên
+        hình ở ngoài kiểu nhỏ nhắn dễ thương hơn tưởng tượng của anh, anh thích em không phải là xinh đẹp mà thích cách
+        nói chuyện
+        ở ngoài của em và cái sự vui vẻ của em khi đi chung với anh em anh thấy rất vui. Anh cũng không biết
         nữa nhưng
       <p>Anh dám đảm bảo với em là một người tử tế, không tệ nạn lăng nhăng, không bao giờ làm em buồn.</p>
       </p>
@@ -78,8 +81,8 @@
 
     function createCuteExplosion(x, y) {
       // Kết hợp cả icon và các từ ngữ dễ thương
-      var items = ['🐰', 'Love you'];
-      var amount = 4 + Math.floor(Math.random() * 5); // 4 đến 8 item một lần
+      var items = ['🐰', '🐷', 'Love you', 'Kim Vàng'];
+      var amount = 4 + Math.floor(Math.random() * 3); // 4 đến 8 item một lần
 
       for (var i = 0; i < amount; i++) {
         var el = document.createElement('div');
@@ -94,7 +97,7 @@
 
         el.innerText = randomItem;
 
-        // Tạo hướng bay ngẫu nhiên cho từng icon
+
         var tx = (Math.random() - 0.5) * 200; // Bay ngang qua lại (-100px đến 100px)
         var ty = -Math.random() * 200 - 50; // Bay lên trên (-50px đến -250px)
 
